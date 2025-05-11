@@ -5,7 +5,10 @@
   <div class="container">
     <p>Восстановите качество звука, узнайте текст, авторов, год создания и многое другое</p>
   </div>
-  <div></div>
+  <div>
+    <TheButton variant="primary" to="/restoration" @click="handleClick">РЕСТАВРАЦИЯ</TheButton>
+    <TheButton variant="secondary" to="/library" @click="handleClick">БИБЛИОТЕКА</TheButton>
+  </div>
 </template>
 
 <style scoped>
@@ -16,5 +19,18 @@
     color: var(--color-pink);
   }
 </style>
+
+<script>
+  import TheButton from "../components/Buttons.vue"
+
+  export default {
+    components: {
+      TheButton
+    },
+    methods: {
+      handleClick(){}
+    }
+  }
+</script>
 
 
