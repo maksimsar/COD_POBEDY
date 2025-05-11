@@ -1,0 +1,40 @@
+:root {
+  --main-bg-color: #e3e2de;
+  --h1-color: #3b3531;
+  --passive-color: #6b665f;
+  --color-dark-pink: #882650;
+  --color-pink: #c7333f;
+}
+
+body {
+  font-family: Ubuntu;
+  color: var(--h1-color);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--main-bg-color);
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+h1 {
+  line-height: 1.2;
+  font-size: 2.4em;
+}
+
+p {
+  font-size: 1.2em;
+}
+
