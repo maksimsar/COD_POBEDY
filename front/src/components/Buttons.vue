@@ -68,6 +68,6 @@ export default {
 
     .button:hover {
         opacity: 0.9;
-        transform: translateY(-1px);
+        transform: translateY(-5px);
     }
 </style>
