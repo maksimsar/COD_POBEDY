@@ -50,7 +50,7 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: var(--maxwidthsize);
   margin: 0 auto;
   padding: 0 20px;
 }
