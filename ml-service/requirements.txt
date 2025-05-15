@@ -1,5 +1,24 @@
-fastapi
-uvicorn[standard]
-torch
-torchaudio
-openai-whisper
+# core
+fastapi==0.110.2
+uvicorn[standard]==0.29.0
+
+# audio I/O и преобразования
+soundfile>=0.12
+torchaudio>=2.2
+librosa>=0.10
+pyloudnorm>=0.1.1
+
+# ML / DL
+torch>=2.3
+transformers>=4.41
+sentencepiece
+accelerate
+
+# шаги пайплайна
+demucs==4.0.0
+
+openai-whisper @ git+https://github.com/openai/whisper.git
+
+# служебное
+rich
+tqdm

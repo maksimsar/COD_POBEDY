@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  ml:
+    build: .
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [ gpu ]
+    volumes:
+      - ./models:/app/models
+      - ./tmp:/app/tmp
+    ports:
+      - "8000:8000"
