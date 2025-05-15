@@ -1,6 +1,6 @@
 ### ReactNative template
 # React Native Stack Base
-ml-service/tmp/*
+ml-service/tmp/
 .expo
 __generated__
 
