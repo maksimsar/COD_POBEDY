@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MetadataService.Models;
+using MassTransit.EntityFrameworkCoreIntegration;
 
 namespace MetadataService.Data;
 
@@ -15,6 +16,8 @@ public sealed class MetadataContext : DbContext
     public DbSet<Tag>        Tags        => Set<Tag>();
     public DbSet<SongTag>    SongTags    => Set<SongTag>();
     public DbSet<Transcript> Transcripts => Set<Transcript>();
+
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
     
     // OnConfiguring оставлен как запасной вариант, если DI не настроит опции (например, при выполнении миграций)
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
