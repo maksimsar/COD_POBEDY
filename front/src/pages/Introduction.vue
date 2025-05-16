@@ -24,16 +24,18 @@
   }
   #buttonsback{
     width: 100%;
-    min-height: 60vh; /* Гарантирует минимум половину экрана */
+    min-height: var(--introminheight); /* Гарантирует минимум половину экрана */
     background-image: url("../assets/mike.png");
-    background-size: cover;
+    background-position: var(--mikeposition);
+    background-size: var(--mikesize);
+    background-repeat: no-repeat;
   }
   #buttonsthem {
     display: flex;
-    justify-content: flex-end;
-    padding-right: calc((100% - var(--maxwidthsize))/2);
-    margin-top: 12%;
-    gap: 10%;
+    justify-content: var(--btnpos);
+    padding-right: var(--buttonright);
+    margin-top: var(--introductionbuttinstop);
+    gap: var(--buttonsgap);
   }
 </style>
 
