@@ -1,13 +1,9 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Common.Events;
 using MassTransit;
-using Microsoft.Extensions.Logging;
-using MetadataService.Messaging.Contracts;
+using MetadataService.Infrastructure.Metrics;
 using MetadataService.Repositories;
-using MetadataService.Application.Services;
 using MetadataService.Models;
+using OpenTelemetry.Trace;
 
 namespace MetadataService.Messaging.Consumers;
 
@@ -16,10 +12,10 @@ namespace MetadataService.Messaging.Consumers;
 /// </summary>
 public sealed class TranscriptReadyConsumer : BaseConsumer<TranscriptReadyV1>
 {
-    private readonly ITranscriptRepository      _trRepo;
-    private readonly ISongRepository            _songRepo;
-    private readonly IUnitOfWork                _uow;
-    private readonly IOutboxPublisher           _outbox;
+    private readonly ITranscriptRepository _trRepo;
+    private readonly ISongRepository _songRepo;
+    private readonly IUnitOfWork _uow;
+    private readonly IPublishEndpoint _bus;
 
     public TranscriptReadyConsumer(
         ILogger<BaseConsumer<TranscriptReadyV1>> log,
@@ -28,13 +24,13 @@ public sealed class TranscriptReadyConsumer : BaseConsumer<TranscriptReadyV1>
         ITranscriptRepository trRepo,
         ISongRepository songRepo,
         IUnitOfWork uow,
-        IOutboxPublisher outbox)
+        IPublishEndpoint bus)
         : base(log, tracer, metrics)
     {
         _trRepo = trRepo;
         _songRepo = songRepo;
         _uow = uow;
-        _outbox = outbox;
+        _bus = bus;
     }
 
     protected override async Task HandleAsync(ConsumeContext<TranscriptReadyV1> ctx)
@@ -50,7 +46,7 @@ public sealed class TranscriptReadyConsumer : BaseConsumer<TranscriptReadyV1>
                 StartMs      = seg.StartMs,
                 EndMs        = seg.EndMs,
                 Text         = seg.Text,
-                Confidence   = seg.Confidence
+                Confidence   = (decimal)seg.Confidence
             });
         }
 
@@ -59,7 +55,7 @@ public sealed class TranscriptReadyConsumer : BaseConsumer<TranscriptReadyV1>
         song.Status = SongStatus.Transcribed;
 
         // 2) Outbox событие
-        _outbox.Add(new SongUpdatedV1(song.Id));
+        await _bus.Publish(new SongUpdatedV1(song.Id), ctx.CancellationToken);
 
         await _uow.SaveChangesAsync(ctx.CancellationToken);
     }

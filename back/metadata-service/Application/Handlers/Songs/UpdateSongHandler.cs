@@ -4,7 +4,6 @@ using Common.Events;
 using MassTransit;
 using MetadataService.Application.Commands;
 using MetadataService.Repositories;
-using MetadataService.Messaging.Contracts;
 
 namespace MetadataService.Application.Handlers.Songs;
 

@@ -3,7 +3,6 @@ using MediatR;
 using MassTransit;
 using MetadataService.Application.Commands;
 using MetadataService.Repositories;
-using MetadataService.Messaging.Contracts;
 using MetadataService.Models;
 
 namespace MetadataService.Application.Handlers.Songs;

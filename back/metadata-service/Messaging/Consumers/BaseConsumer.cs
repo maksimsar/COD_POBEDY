@@ -1,14 +1,9 @@
-using System;
-using System.Threading.Tasks;
 using MassTransit;
-using Microsoft.Extensions.Logging;
+using MetadataService.Infrastructure.Metrics;
 using OpenTelemetry.Trace;
 
 namespace MetadataService.Messaging.Consumers;
 
-/// <summary>
-/// Базовый consumer с шаблоном обработки: Validate → Handle + обёртка метрик/логов/трейсов.
-/// </summary>
 public abstract class BaseConsumer<T> : IConsumer<T>
     where T : class
 {

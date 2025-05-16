@@ -4,7 +4,6 @@ using MassTransit;
 using MetadataService.DTOs;
 using MetadataService.Domain.Builders;
 using MetadataService.Models;
-using MetadataService.Messaging.Contracts;
 using MetadataService.Repositories;
 
 namespace MetadataService.Application.Services;
@@ -59,15 +58,18 @@ internal sealed class SongService : ISongService
 
     public async Task<Guid> CreateAsync(CreateSongRequest req, CancellationToken ct = default)
     {
-        // 1) маппим базовые поля
         var song = _mapper.Map<Song>(req);
 
         // 2) через Builder добавляем авторов и теги
-        await _builder
-            .For(song)
-            .AttachAuthorsAsync(req.AuthorIds, _authorRepo, ct)
-            .AttachTagsAsync(req.TagIds, _tagRepo, ct)
-            .BuildAsync();
+        var builderWithAuthors = await _builder
+            .For(song)                                   
+            .AttachAuthorsAsync(req.AuthorIds.ToArray(), ct);
+
+        var builderWithTags = await builderWithAuthors
+            .AttachTagsAsync(req.TagIds.ToArray(), ct);
+
+        var builtSong = await builderWithTags
+            .BuildAsync(ct);
 
         _songRepo.Add(song);
         await _uow.SaveChangesAsync(ct);

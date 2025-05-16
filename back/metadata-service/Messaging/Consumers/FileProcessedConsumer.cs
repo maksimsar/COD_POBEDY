@@ -1,12 +1,11 @@
-using System;
-using System.Threading.Tasks;
 using Common.Commands;
 using Common.Events;
 using MassTransit;
-using Microsoft.Extensions.Logging;
 using MetadataService.Adapters;
-using MetadataService.Messaging.Contracts; // из общего пакета
+using MetadataService.Infrastructure.Metrics;
+using MetadataService.Models;
 using MetadataService.Repositories;
+using OpenTelemetry.Trace;
 
 namespace MetadataService.Messaging.Consumers;
 

@@ -66,6 +66,10 @@ public sealed class MetadataContext : DbContext
 
             entity.Property(s => s.DurationSec)
                 .HasColumnName("duration_sec");
+            
+            entity.Property(s => s.Status)
+                .HasColumnName("status")
+                .HasDefaultValue(SongStatus.Uploaded);
 
             entity.Property(s => s.CreatedAt)
                 .HasColumnName("created_at")
