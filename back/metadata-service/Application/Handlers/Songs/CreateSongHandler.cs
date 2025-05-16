@@ -7,6 +7,7 @@ using MetadataService.Models;
 using MetadataService.Repositories;
 using MetadataService.Domain.Builders;
 using MetadataService.Messaging.Contracts;
+using Common.Contracts.Events;
 
 public sealed class CreateSongHandler : IRequestHandler<CreateSongCommand, Guid>
 {
@@ -16,7 +17,7 @@ public sealed class CreateSongHandler : IRequestHandler<CreateSongCommand, Guid>
     private readonly IUnitOfWork       _uow;
     private readonly IMapper           _mapper;
     private readonly IPublishEndpoint  _bus;
-    private readonly SongBuilder       _builder;
+    private readonly ISongBuilder       _builder;
 
     public CreateSongHandler(
         ISongRepository   songRepo,
@@ -25,7 +26,7 @@ public sealed class CreateSongHandler : IRequestHandler<CreateSongCommand, Guid>
         IUnitOfWork       uow,
         IMapper           mapper,
         IPublishEndpoint  bus,
-        SongBuilder       builder)
+        ISongBuilder       builder)
     {
         _songRepo  = songRepo;
         _authorRepo= authorRepo;
@@ -40,11 +41,16 @@ public sealed class CreateSongHandler : IRequestHandler<CreateSongCommand, Guid>
     {
         // 1. Маппинг и сборка
         var song = _mapper.Map<Song>(cmd.Request);
-        await _builder
+        
+        var builderWithAuthors = await _builder
             .For(song)
-            .AttachAuthorsAsync(cmd.Request.AuthorIds, _authorRepo, ct)
-            .AttachTagsAsync(cmd.Request.TagIds, _tagRepo, ct)
-            .BuildAsync();
+            .AttachAuthorsAsync(cmd.Request.AuthorIds.ToArray(), ct);
+        
+        var builderWithTags = await builderWithAuthors
+            .AttachTagsAsync(cmd.Request.TagIds.ToArray(), ct);
+        
+        var builtSong = await builderWithTags
+            .BuildAsync(ct);
 
         // 2. Сохранение
         _songRepo.Add(song);
