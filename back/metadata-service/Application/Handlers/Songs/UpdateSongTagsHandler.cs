@@ -1,3 +1,4 @@
+using Common.Events;
 using MediatR;
 using MassTransit;
 using MetadataService.Application.Commands;

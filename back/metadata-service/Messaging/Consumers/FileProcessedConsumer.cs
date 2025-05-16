@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Common.Commands;
+using Common.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using MetadataService.Adapters;

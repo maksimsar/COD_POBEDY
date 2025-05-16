@@ -7,7 +7,7 @@ using MetadataService.Models;
 using MetadataService.Repositories;
 using MetadataService.Domain.Builders;
 using MetadataService.Messaging.Contracts;
-using Common.Contracts.Events;
+using Common.Events;
 
 public sealed class CreateSongHandler : IRequestHandler<CreateSongCommand, Guid>
 {

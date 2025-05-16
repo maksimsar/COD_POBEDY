@@ -1,4 +1,5 @@
 using AutoMapper;
+using Common.Events;
 using MassTransit;
 using MetadataService.DTOs;
 using MetadataService.Domain.Builders;

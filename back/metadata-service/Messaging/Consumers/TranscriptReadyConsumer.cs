@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using MetadataService.Messaging.Contracts;
 using MetadataService.Repositories;
 using MetadataService.Application.Services;
+using MetadataService.Models;
 
 namespace MetadataService.Messaging.Consumers;
 
