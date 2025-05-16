@@ -33,10 +33,10 @@ internal sealed class SongBuilder : ISongBuilder
         return this;
     }
 
-    public async Task<ISongBuilder> AttachAuthorsAsync(Guid[] authorIds, CancellationToken ct = default)
+    public async Task<ISongBuilder> AttachAuthorsAsync(IReadOnlyList<Guid> authorIds, CancellationToken ct = default)
     {
         EnsureSong();
-        if (authorIds is null || authorIds.Length == 0)
+        if (authorIds is null || authorIds.Count == 0)
             throw new ArgumentException("authorIds cannot be empty");
 
         var set = new HashSet<Guid>(_song!.SongAuthors.Select(sa => sa.AuthorId));
