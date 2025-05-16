@@ -1,3 +1,4 @@
+/*
 using MetadataService.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -6,17 +7,17 @@ namespace MetadataService.Adapters;
 public sealed class WhisperGrpcAdapter : IAudioTranscriber
 {
     private readonly WhisperGrpc.WhisperGrpcClient _client; // сгенерённый gRPC‑stub
-    private readonly ILogger<WhisperGrpcAdapter>    _log;
-    private readonly GrpcSettings                   _cfg;
+    private readonly ILogger<WhisperGrpcAdapter>  _log;
+    private readonly GrpcSettings _cfg;
 
     public WhisperGrpcAdapter(
         WhisperGrpc.WhisperGrpcClient client,
-        IOptions<GrpcSettings>        cfg,
-        ILogger<WhisperGrpcAdapter>   log)
+        IOptions<GrpcSettings> cfg,
+        ILogger<WhisperGrpcAdapter> log)
     {
         _client = client;
-        _cfg    = cfg.Value;
-        _log    = log;
+        _cfg = cfg.Value;
+        _log = log;
     }
 
     public async Task<IReadOnlyList<TranscriptSegment>> TranscribeAsync(
@@ -55,4 +56,4 @@ public sealed class WhisperGrpcAdapter : IAudioTranscriber
         _log.LogInformation("Whisper returned {Count} segments", segments.Count);
         return segments;
     }
-}
+}*/
