@@ -1,2 +1,98 @@
-version: '3.8'
+# back/docker-compose.yml
 services:
+  # PostgreSQL
+  db:
+    image: postgres:16
+    container_name: cod_pobedy-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: rootpass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:5432"
+    networks:
+      - backend
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: adminpass
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - backend
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+    container_name: auth-service
+    env_file: auth-service/.env
+    depends_on: [db, rabbitmq]
+    ports: ["8000:80"]
+    networks: [backend]
+
+  upload-service:
+    build:
+      context: .
+      dockerfile: upload-service/Dockerfile
+    container_name: upload-service
+    env_file: upload-service/.env
+    depends_on: [db, rabbitmq]
+    ports: ["8001:80"]
+    volumes:
+      - ./upload-service/uploads:/app/uploads
+    networks: [backend]
+
+  processing-service:
+    build:
+      context: .
+      dockerfile: processing-service/Dockerfile
+    container_name: processing-service
+    env_file: processing-service/.env
+    depends_on: [db, rabbitmq]
+    ports: ["8002:80"]
+    networks: [backend]
+
+  transcription-service:
+    build:
+      context: .
+      dockerfile: transcription-service/Dockerfile
+    container_name: transcription-service
+    env_file: transcription-service/.env
+    depends_on: [db, rabbitmq]
+    ports: ["8003:80"]
+    networks: [backend]
+
+  metadata-service:
+    build:
+      context: .
+      dockerfile: metadata-service/Dockerfile
+    container_name: metadata-service
+    env_file: metadata-service/.env
+    depends_on: [db, rabbitmq]
+    ports: ["8004:80"]
+    networks: [backend]
+
+  search-service:
+    build:
+      context: .
+      dockerfile: search-service/Dockerfile
+    container_name: search-service
+    env_file: search-service/.env
+    depends_on: [db, rabbitmq]
+    ports: ["8005:80"]
+    networks: [backend]
+
+volumes:
+  pgdata:
+
+networks:
+  backend:
+    driver: bridge
