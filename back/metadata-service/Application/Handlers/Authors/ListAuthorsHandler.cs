@@ -6,7 +6,7 @@ using MetadataService.Repositories;
 
 namespace MetadataService.Application.Handlers;
 
-public sealed class ListAuthorsHandler : IRequestHandler<ListAuthorsQuery, IReadOnlyList<AuthorDto>>
+internal sealed class ListAuthorsHandler : IRequestHandler<ListAuthorsQuery, IReadOnlyList<AuthorDto>>
 {
     private readonly IAuthorRepository _authorRepo;
     private readonly IMapper _mapper;
