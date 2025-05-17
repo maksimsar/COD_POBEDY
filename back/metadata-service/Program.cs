@@ -30,7 +30,7 @@ builder.Configuration
 // ──────────────── EF Core ───────────────────────
 builder.Services.AddDbContext<MetadataContext>(opt =>
 {
-    var cs = builder.Configuration.GetConnectionString("Default");
+    var cs = builder.Configuration.GetConnectionString("DefaultConnection");
     opt.UseNpgsql(cs, o => o.MigrationsAssembly(typeof(MetadataContext).Assembly.FullName));
 });
 
