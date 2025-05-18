@@ -61,6 +61,8 @@ __generated__
 # *.iml
 # *.ipr
 
+back/db-init/
+
 # CMake
 cmake-build-*/
 

@@ -9,8 +9,8 @@
   </main>
   <div id = "buttonsback">
     <div id = "buttonsthem">
-      <TheButton variant="primary" to="/restoration" @click="handleClick">РЕСТАВРАЦИЯ</TheButton>
-      <TheButton variant="secondary" to="/library" @click="handleClick">БИБЛИОТЕКА</TheButton>
+      <TheButton variant="primary" to="/restoration">РЕСТАВРАЦИЯ</TheButton>
+      <TheButton variant="secondary" to="/library">БИБЛИОТЕКА</TheButton>
     </div>
   </div>
 </template>
