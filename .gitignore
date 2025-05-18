@@ -1,6 +1,6 @@
 ### ReactNative template
 # React Native Stack Base
-
+ml-service/tmp/
 .expo
 __generated__
 
@@ -60,6 +60,8 @@ __generated__
 # .idea/modules
 # *.iml
 # *.ipr
+
+back/db-init/
 
 # CMake
 cmake-build-*/

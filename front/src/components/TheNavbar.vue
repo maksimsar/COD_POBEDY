@@ -3,8 +3,8 @@
     <div class="container">
       <router-link to="/" class="logo"><img src = "../assets/logo.png"></router-link>
       <div class="nav-links" v-if="!isIntroduction">
-        <router-link class="{ 'active-link': isActive(/library) }" to="/library">Библиотека</router-link>
-        <router-link class="{ 'active-link': isActive(/restoration) }" to="/restoration">Рестоврация</router-link>
+        <router-link :class="{ 'active-link': isActive('/library') }" to="/library">БИБЛИОТЕКА</router-link>
+        <router-link :class="{ 'active-link': isActive('/restoration') }" to="/restoration">РЕСТОВРАЦИЯ</router-link>
       </div>
     </div>
   </nav>
@@ -50,20 +50,23 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: var(--maxwidthsize);
   margin: 0 auto;
   padding: 0 20px;
 }
 
 .nav-links {
   display: flex;
-  gap: 20px;
+  gap: 8vh ;
+  font-size: var(--buttonfontsize);
+  font-weight: var(--h2weight);
 }
 
 .nav-links a {
-  color: var(passive-color);
+  color: var(--passive-color);
   padding: 5px 10px;
   border-radius: 4px;
+  text-decoration: none;
 }
 
 .nav-links a:hover {
@@ -72,6 +75,6 @@ nav {
 }
 
 .active-link {
-  color: var(h1-color);
+  color: var(--h1-color) !important;
 }
 </style>

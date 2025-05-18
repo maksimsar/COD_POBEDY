@@ -1,0 +1,6 @@
+using MediatR;
+using MetadataService.DTOs;
+
+namespace MetadataService.Application.Queries.Tags;
+
+public sealed record GetTagQuery(int Id) : IRequest<TagDto?>;
