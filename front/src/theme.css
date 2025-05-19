@@ -109,6 +109,10 @@
   --h2weight: bold;
 }
 
+input {
+  font-family: Ubuntu;
+}
+
 body {
   font-family: Ubuntu;
   color: var(--h1-color);
