@@ -1,0 +1,18 @@
+# ---- всё, что ДОЛЖНО быть в образе -----
+!requirements.txt
+!pipeline/**
+!*.py
+!config/**   
+!train_denoiser.py
+       # уберите, если у вас нет такой папки
+
+# ---- игнорируем тяжёлые или лишние файлы ----
+.cache
+*.pt
+*.ckpt
+models/
+logs/
+tmp/
+data/
+__pycache__/
+.git

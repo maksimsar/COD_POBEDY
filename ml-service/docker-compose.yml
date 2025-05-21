@@ -1,15 +1,26 @@
 version: "3.9"
+
 services:
   ml:
     build: .
+    container_name: ml-service-cpu
     restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [ gpu ]
+
+    ports:
+      - "8000:8000"      # FastAPI / Swagger
+      # - "6006:6006"    # если когда-нибудь понадобится TensorBoard
+
     volumes:
       - ./models:/app/models
+      - ./logs:/app/logs
       - ./tmp:/app/tmp
-    ports:
-      - "8000:8000"
+      - ./data:/app/data
+      # монтировать весь проект (./:/app) нужно только для live-dev;
+      # в production это лишнее — образ уже содержит код.
+
+    environment:
+      PYTHONUNBUFFERED: "1"
+
+    #  единственная команда — uvicorn
+    command: >
+      uvicorn app:app --host 0.0.0.0 --port 8000 --proxy-headers
