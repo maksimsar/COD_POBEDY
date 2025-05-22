@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AutoMapper;
 using Common.Events;
 using MassTransit;
 using TranscriptionService.Adapters;
@@ -15,21 +16,21 @@ public sealed class TranscriptionService : ITranscriptionService
     private readonly IStorageClient _storage;                  
     private readonly ISttEngine     _sttEngine;                
     private readonly ITranscriptionJobRepository _repo;        
-    private readonly IPublishEndpoint _bus;                    
     private readonly ILogger<TranscriptionService> _log;
+    private readonly IMapper _mapper;
 
     public TranscriptionService(
         IStorageClient               storage,
         ISttEngine                   sttEngine,
         ITranscriptionJobRepository  repo,
-        IPublishEndpoint             bus,
-        ILogger<TranscriptionService> log)
+        ILogger<TranscriptionService> log,
+        IMapper mapper)
     {
         _storage    = storage;
         _sttEngine  = sttEngine;
         _repo       = repo;
-        _bus        = bus;
         _log        = log;
+        _mapper     = mapper;
     }
     
     public async Task ProcessAsync(long jobId,
@@ -48,11 +49,13 @@ public sealed class TranscriptionService : ITranscriptionService
         {
             await using var wavStream = await _storage.DownloadAsync(storageKey, ct);
             
-            var segments = await _sttEngine.RecognizeAsync(wavStream, job.Language, ct);
-            
             job.Status      = TranscriptionJob.JobStatus.Done;
             job.FinishedAt  = DateTimeOffset.UtcNow;
             await _repo.SaveAsync(ct);
+            
+            var segments = (await _sttEngine
+                    .RecognizeAsync(wavStream, job.Language, ct))
+                .ToList();   // IReadOnlyList<T> умеет принимать List<T>
             
             var evt = new TranscriptReadyV2(
                 job.AudioFileId,
@@ -103,14 +106,6 @@ public sealed class TranscriptionService : ITranscriptionService
     public async Task<TranscriptionJobDto?> GetAsync(long jobId, CancellationToken ct = default)
     {
         var job = await _repo.GetAsync(jobId, ct);
-        return job is null
-            ? null
-            : new TranscriptionJobDto(
-                  job.Id,
-                  job.AudioFileId,
-                  job.Status,
-                  job.StartedAt,
-                  job.FinishedAt,
-                  job.ErrorMessage);
+        return _mapper.Map<TranscriptionJobDto>(job);
     }
 }
