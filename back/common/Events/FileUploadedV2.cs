@@ -1,7 +1,7 @@
 namespace Common.Events;
 
 public sealed record FileUploadedV2(
-    Guid SongId,
+    Guid AudioFileId,
     string StorageKey,
     string MimeType, 
     long FileSize);
