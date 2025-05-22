@@ -1,8 +1,7 @@
-# pipeline/pipeline.py
-
 from __future__ import annotations
 from pathlib import Path
 import uuid
+import logging
 from config import AUDIO_TEMP_DIR, DEVICE
 
 def process(audio_in: Path | str, *, do_master: bool = True) -> dict[str, Path | str]:
@@ -11,7 +10,7 @@ def process(audio_in: Path | str, *, do_master: bool = True) -> dict[str, Path |
       1) удаление щелчков
       2) восстановление пиков
       3) FullSubNet-2 шумоподавление
-      4) разделение на вокал/инструментал
+      4) (пропущено Demucs)
       5) VoiceFixer для вокала
       6) очистка инструментала FullSubNet-2
       7) финальный declip вокала
@@ -35,17 +34,18 @@ def process(audio_in: Path | str, *, do_master: bool = True) -> dict[str, Path |
     # 3) Denoise FullSubNet-2
     from .fullsubnet2_denoise import denoise_fullsubnet
     step3 = tmp / "03_denoised_fs.wav"
-    denoise_fullsubnet(step2, step3)
+    denoise_fullsubnet(step2, step3, device=DEVICE)
 
-    # 4) Source separation (Demucs)
-    from .separate_vocals     import separate_vocals
-    vocals, inst = separate_vocals(step3, tmp)
+    # 4) Source separation (Demucs) — пропущено из-за нестабильности на старых записях
+    logging.info("Skipping Demucs separation; using full mix for both vocals and instrumental.")
+    vocals = step3
+    inst   = step3
 
     # 5) VoiceFixer (вокал)
     from .voicefixer_wrapper  import VoiceFixer
-    step5 = tmp / "05_voicefixed.wav"                            # ← добавить эту строку
-    vf = VoiceFixer(device=DEVICE, mode=0)                        # mode задаём в конструкторе
-    vf.process(vocals, step5)                                     # ← вызываем без лишних args
+    step5 = tmp / "05_voicefixed.wav"
+    vf = VoiceFixer(device=DEVICE, mode=0)
+    vf.process(vocals, step5)
 
     # 6) Denoise инструментала FullSubNet-2
     step6 = tmp / "06_inst_denoised.wav"
@@ -71,7 +71,7 @@ def process(audio_in: Path | str, *, do_master: bool = True) -> dict[str, Path |
         text = transcribe(final)
         category = clf.predict(text)
     except Exception as e:
-        print("ASR/genre tagging failed:", e)
+        logging.warning("ASR/genre tagging failed: %s", e)
 
     return {
         "restored_path":        final.name,
