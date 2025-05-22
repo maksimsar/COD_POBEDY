@@ -22,7 +22,6 @@ def denoise_fullsubnet(
         device=device,
         input_wav=str(wav_in),
         output_dir=str(out_dir),
-        
     )
 
     # Подменяем sys.exit, чтобы внешние exit() не убили Uvicorn

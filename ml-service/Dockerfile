@@ -49,7 +49,7 @@ RUN pip install --no-cache-dir \
 # 8.1) Предзагружаем small-модель Whisper
 RUN python - <<EOF
 import whisper
-whisper.load_model("small", download_root="/root/.cache/whisper")
+whisper.load_model("small", download_root="/root/.cache/whisper") #large-v2
 EOF
 
 # 9) Весы VoiceFixer и Demucs
