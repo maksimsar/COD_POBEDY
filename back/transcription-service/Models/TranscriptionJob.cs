@@ -7,8 +7,8 @@ public class TranscriptionJob : BaseEntity
     public Guid AudioFileId { get; init; }
     public string ModelUsed { get; set; } = "whisper";
     public string Language {get; set;} = "ru";
-    public DateTimeOffset StartedAt { get; init; }
-    public DateTimeOffset FinishedAt { get; init; }
+    public DateTimeOffset StartedAt { get; set; }
+    public DateTimeOffset FinishedAt { get; set; }
     public string Status { get; set; } = JobStatus.Queued;
     public string? ErrorMessage { get; set; }
 
