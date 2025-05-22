@@ -23,7 +23,7 @@ builder.Configuration
 // ──────────────── EF Core + Postgres ────────────
 svc.AddDbContext<TranscriptionContext>(opt =>
 {
-    var cs = cfg.GetConnectionString("Postgres");
+    var cs = cfg.GetConnectionString("DefaultConnection");
     opt.UseNpgsql(cs, o => o.MigrationsAssembly(typeof(TranscriptionContext).Assembly.FullName));
 });
 

@@ -13,24 +13,6 @@ public sealed class TranscriptionContext : DbContext
     public DbSet<TranscriptionJob> TranscriptionJobs => Set<TranscriptionJob>();
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            // Создаём конфигурацию вручную из appsettings.json, который находится в корне приложения
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.Developmetn.json", optional: false, reloadOnChange: true)
-                .Build();
-
-            // Читаем строку подключения по ключу "DefaultConnection"
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-
-            // Настраиваем подключение к PostgreSQL
-            optionsBuilder.UseNpgsql(connectionString);
-        }
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasPostgresExtension("uuid-ossp");
@@ -46,7 +28,7 @@ public sealed class TranscriptionContext : DbContext
             
             entity.Property(t => t.CreatedAt)
                 .HasColumnName("created_at")
-                .HasColumnType("timestamp without time zone");
+                .HasColumnType("timestamp with time zone");
 
             entity.Property(t => t.AudioFileId)
                 .HasColumnName("audio_file_id")
@@ -56,12 +38,15 @@ public sealed class TranscriptionContext : DbContext
                 .HasColumnName("model_used")
                 .IsRequired()
                 .HasMaxLength(64);
+            
             entity.Property(t => t.StartedAt)
                 .HasColumnName("started_at")
-                .HasColumnType("timestamp without time zone");
+                .HasColumnType("timestamp with time zone");
+            
             entity.Property(t => t.FinishedAt)
                 .HasColumnName("finished_at")
-                .HasColumnType("timestamp without time zone");
+                .HasColumnType("timestamp with time zone");
+            
             entity.Property(t => t.Status)
                 .HasColumnName("status")
                 .IsRequired()

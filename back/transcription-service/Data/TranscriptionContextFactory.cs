@@ -18,7 +18,7 @@ public sealed class TranscriptionContextFactory : IDesignTimeDbContextFactory<Tr
             .AddEnvironmentVariables()
             .Build();
         
-        var cs = cfg.GetConnectionString("Postgres")
+        var cs = cfg.GetConnectionString("DefaultConnection")
                  ?? throw new InvalidOperationException(
                      "ConnectionStrings:Postgres not found.");
         
