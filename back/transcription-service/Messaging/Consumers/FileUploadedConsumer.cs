@@ -1,8 +1,10 @@
 using Common.Events;
 using MassTransit;
 using TranscriptionService.Data;
+using TranscriptionService.Interfaces;
 using TranscriptionService.Models;
 using TranscriptionService.Repositories;
+using TranscriptionService.Services;
 
 namespace TranscriptionService.Messaging.Consumers;
 
