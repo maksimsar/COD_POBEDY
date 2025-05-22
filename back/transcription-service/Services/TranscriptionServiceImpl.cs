@@ -11,19 +11,19 @@ using TranscriptionService.Repositories;
 
 namespace TranscriptionService.Services;
 
-public sealed class TranscriptionService : ITranscriptionService
+public sealed class TranscriptionServiceImpl : ITranscriptionService
 {
     private readonly IStorageClient _storage;                  
     private readonly ISttEngine     _sttEngine;                
     private readonly ITranscriptionJobRepository _repo;        
-    private readonly ILogger<TranscriptionService> _log;
+    private readonly ILogger<TranscriptionServiceImpl> _log;
     private readonly IMapper _mapper;
 
-    public TranscriptionService(
+    public TranscriptionServiceImpl(
         IStorageClient               storage,
         ISttEngine                   sttEngine,
         ITranscriptionJobRepository  repo,
-        ILogger<TranscriptionService> log,
+        ILogger<TranscriptionServiceImpl> log,
         IMapper mapper)
     {
         _storage    = storage;
