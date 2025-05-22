@@ -1,80 +1,95 @@
 <template>
   <main>
-      <div class="search-container">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <img src="../assets/search.png">
+        <input
+          v-model="searchQuery"
+          @input="debouncedSearch"
+          @keyup.enter="performSearch"
+          placeholder="Поиск"
+          class="search-input"
+        />
+        <button @click="toggleFilters" class="filter-toggle">
+          <img :class="['arrow-icon', { 'arrow-up': showFilters }]" src="../assets/arrow.png"> 
+        </button>
+      </div>
 
-        <div class="search-input-wrapper">
-          <img src="../assets/search.png">
-          <input
-            v-model="searchQuery"
-            @input="debouncedSearch"
-            @keyup.enter="performSearch"
-            placeholder="Поиск"
-            class="search-input"
-          />
-          <button @click="toggleFilters" class="filter-toggle">
-            <img :class="['arrow-icon', { 'arrow-up': showFilters }]" src="../assets/arrow.png"> 
-          </button>
+      <div v-if="showFilters" class="filters-panel">
+        <div class="filter-section">
+          <p>Жанры</p>
+          <div class="filter-options">
+            <label v-for="genre in availableGenres" :key="'genre-' + genre">
+              <input
+                type="checkbox"
+                v-model="selectedGenres"
+                :value="genre"
+                @change="applyFilters"
+              />
+              {{ genre }}
+            </label>
+          </div>
         </div>
 
-        <div v-if="showFilters" class="filters-panel">
-          <div class="filter-section">
-            <p>Жанры</p>
-            <div class="filter-options">
-              <label v-for="genre in allGenres" :key="'genre-' + genre">
-                <input
-                  type="checkbox"
-                  v-model="selectedGenres"
-                  :value="genre"
-                  @change="applyFilters"
-                />
-                {{ genre }}
-              </label>
-            </div>
-          </div>
-
-          <div class="filter-section">
-            <p>Настроения</p>
-            <div class="filter-options">
-              <label v-for="mood in allMoods" :key="'mood-' + mood">
-                <input
-                  type="checkbox"
-                  v-model="selectedMoods"
-                  :value="mood"
-                  @change="applyFilters"
-                />
-                {{ mood }}
-              </label>
-            </div>
+        <div class="filter-section">
+          <p>Настроения</p>
+          <div class="filter-options">
+            <label v-for="mood in availableMoods" :key="'mood-' + mood">
+              <input
+                type="checkbox"
+                v-model="selectedMoods"
+                :value="mood"
+                @change="applyFilters"
+              />
+              {{ mood }}
+            </label>
           </div>
         </div>
       </div>
+    </div>
 
-      <div v-if="isLoading" class="loading">Загрузка...</div>
-      <div v-else-if="error" class="error">{{ error }}</div>
-      <div v-else-if="songs.length === 0" class="no-results">Ничего не найдено</div>
+    <!-- Режим просмотра популярных настроений -->
+    <div v-if="!hasActiveFilters" class="mood-sections">
+      <div v-for="mood in topMoods" :key="'mood-section-' + mood.name" class="mood-section">
+        <h2 class="mood-title">{{ mood.name }}</h2>
+        <div class="mood-songs">
+          <div v-for="song in mood.songs" :key="song.Id" class="song-item">
+            <h3>{{ song.Title }}</h3>
+            <p class="artist">{{ song.Artist }}</p>
+            <p class="meta">
+              <span>{{ song.Genre }}</span> • 
+              <span>{{ song.Year }}</span> • 
+              <span>{{ formatDuration(song.DurationSec) }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Режим обычного поиска -->
+    <div v-else>
+      <div v-if="filteredSongs.length === 0" class="no-results">
+        Ничего не найдено
+      </div>
       <div v-else class="results">
         <div v-for="song in filteredSongs" :key="song.Id" class="song-item">
           <h3>{{ song.Title }}</h3>
           <p class="artist">{{ song.Artist }}</p>
           <p class="meta">
             <span>{{ song.Genre }}</span> • 
-            <span>{{ song.Mood }}</span> • 
+            <span>{{ formatMoods(song.Moods) }}</span> • 
             <span>{{ song.Year }}</span> • 
             <span>{{ formatDuration(song.DurationSec) }}</span>
           </p>
           <p v-if="song.Description" class="description">{{ song.Description }}</p>
-          <p class="dates">
-            Добавлено: {{ formatDate(song.CreatedAt) }} | 
-            Обновлено: {{ formatDate(song.UpdatedAt) }}
-          </p>
         </div>
       </div>
+    </div>
   </main>
 </template>
 
 <script>
-import { debounce } from 'lodash';
-
+import songsData from '../assets/songs_test.json'
 export default {
   data() {
     return {
@@ -82,27 +97,63 @@ export default {
       showFilters: false,
       selectedGenres: [],
       selectedMoods: [],
-      allGenres: [],
-      allMoods: [],
-      songs: [],
-      isLoading: false,
-      error: null,
-      debouncedSearch: debounce(this.performSearch, 500) // ? хз че эт
-    };
+      allSongs: [],
+      availableGenres: [],
+      availableMoods: []
+    }
   },
-  computed: { //вместо эластиксерч с бэка
+  computed: {
+    // Проверяем, есть ли активные фильтры или поисковый запрос
+    hasActiveFilters() {
+      return this.searchQuery !== '' || 
+             this.selectedGenres.length > 0 || 
+             this.selectedMoods.length > 0
+    },
+    
+    // Топ-3 настроений с наибольшим количеством песен
+    topMoods() {
+      const moodCounts = {}
+      
+      // Считаем количество песен для каждого настроения
+      this.allSongs.forEach(song => {
+        if (song.Moods && Array.isArray(song.Moods)) {
+          song.Moods.forEach(mood => {
+            moodCounts[mood] = (moodCounts[mood] || 0) + 1
+          })
+        }
+      })
+      
+      // Сортируем по количеству песен и берём топ-3
+      const sortedMoods = Object.entries(moodCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([name]) => name)
+      
+      // Формируем объекты с песнями для каждого настроения
+      return sortedMoods.map(mood => ({
+        name: mood,
+        songs: this.allSongs.filter(song => 
+          song.Moods && song.Moods.includes(mood)
+        ).slice(0, 4) // Берём первые 4 песни для каждого настроения
+      }))
+    },
+    
+    // Отфильтрованные песни для режима поиска
     filteredSongs() {
-      return this.songs.filter(song => {
+      return this.allSongs.filter(song => {
+        // Фильтр по поисковому запросу
         const matchesSearch = this.searchQuery === '' || 
           song.Title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           song.Artist.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           (song.Description && song.Description.toLowerCase().includes(this.searchQuery.toLowerCase()))
         
+        // Фильтр по жанрам
         const matchesGenres = this.selectedGenres.length === 0 || 
           this.selectedGenres.includes(song.Genre)
-
+        
+        // Фильтр по настроениям
         const matchesMoods = this.selectedMoods.length === 0 || 
-          this.selectedMoods.includes(song.Mood)
+          (song.Moods && song.Moods.some(mood => this.selectedMoods.includes(mood)))
         
         return matchesSearch && matchesGenres && matchesMoods
       })
@@ -114,27 +165,26 @@ export default {
   },
   methods: {
     async loadSongs() {
-      try {
-        const response = await fetch('./songs_test.json')
-        const data = await response.json()
-        this.songs = data.songs
-      } catch (error) {
-        console.error('Ошибка загрузки песен:', error)
-      }
+      this.allSongs = songsData.songs
     },
     extractFilters() {
-      // Получаем уникальные жанры и настроения из всех песен
-      this.allGenres = [...new Set(this.songs.map(song => song.Genre))]
-      this.allMoods = [...new Set(this.songs.map(song => song.Mood))]
+      // Получаем уникальные жанры
+      this.availableGenres = [...new Set(this.allSongs.map(song => song.Genre))]
+      
+      // Получаем уникальные настроения из всех песен
+      const allMoods = this.allSongs
+        .filter(song => song.Moods)
+        .flatMap(song => song.Moods)
+      this.availableMoods = [...new Set(allMoods)]
     },
     toggleFilters() {
       this.showFilters = !this.showFilters
     },
     performSearch() {
-      // В локальной версии просто используем computed свойство filteredSongs
+      // В локальной версии просто используем computed свойства
     },
     applyFilters() {
-      // В локальной версии просто используем computed свойство filteredSongs
+      // В локальной версии просто используем computed свойства
     },
     formatDuration(seconds) {
       if (!seconds) return '--:--'
@@ -142,10 +192,9 @@ export default {
       const secs = seconds % 60
       return `${mins}:${secs.toString().padStart(2, '0')}`
     },
-    formatDate(dateString) {
-      if (!dateString) return '--.--.----'
-      const date = new Date(dateString)
-      return date.toLocaleDateString('ru-RU')
+    formatMoods(moods) {
+      if (!moods || !moods.length) return '—'
+      return moods.join(', ')
     }
   }
 }
