@@ -6,6 +6,7 @@ uvicorn[standard]==0.29.0
 soundfile>=0.12
 torchaudio>=2.2
 librosa>=0.10
+cycler>=0.10
 pyloudnorm>=0.1.1
 
 # ML / DL
@@ -17,8 +18,12 @@ accelerate
 # шаги пайплайна
 demucs==4.0.0
 
-openai-whisper @ git+https://github.com/openai/whisper.git
+openai-whisper
 
 # служебное
 rich
 tqdm
+# De-clipper + Vocal-fixer
+
+# YAML для тренинга
+pyyaml

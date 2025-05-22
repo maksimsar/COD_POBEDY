@@ -1,0 +1,24 @@
+# configs/train_denoiser.yaml
+data:
+  clean_dir: "../data/clean"
+  noisy_dir: "../data/noisy"
+  sample_rate: 16000
+  segment_length: 4     # секунды
+  batch_size: 8
+model:
+  name: "FullSubNet2"
+  hidden_size: 64
+  num_layers: 6
+training:
+  epochs: 100
+  lr: 1e-4
+  optimizer: "Adam"
+  loss: "L1"
+  scheduler:
+    type: "StepLR"
+    step_size: 30
+    gamma: 0.5
+logging:
+  use_wandb: true
+  project: "audio-denoise"
+  log_interval: 50
