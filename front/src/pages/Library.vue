@@ -1,6 +1,7 @@
 <template>
   <main>
       <div class="search-container">
+
         <div class="search-input-wrapper">
           <img src="../assets/search.png">
           <input
@@ -52,13 +53,23 @@
       <div v-else-if="error" class="error">{{ error }}</div>
       <div v-else-if="songs.length === 0" class="no-results">Ничего не найдено</div>
       <div v-else class="results">
-        <div v-for="song in songs" :key="song.id" class="song-item">
-          <h3>{{ song.title }}</h3>
-          <p>{{ song.artist }} • {{ song.genre }} • {{ song.mood }}</p>
+        <div v-for="song in filteredSongs" :key="song.Id" class="song-item">
+          <h3>{{ song.Title }}</h3>
+          <p class="artist">{{ song.Artist }}</p>
+          <p class="meta">
+            <span>{{ song.Genre }}</span> • 
+            <span>{{ song.Mood }}</span> • 
+            <span>{{ song.Year }}</span> • 
+            <span>{{ formatDuration(song.DurationSec) }}</span>
+          </p>
+          <p v-if="song.Description" class="description">{{ song.Description }}</p>
+          <p class="dates">
+            Добавлено: {{ formatDate(song.CreatedAt) }} | 
+            Обновлено: {{ formatDate(song.UpdatedAt) }}
+          </p>
         </div>
       </div>
   </main>
-  
 </template>
 
 <script>
@@ -71,51 +82,73 @@ export default {
       showFilters: false,
       selectedGenres: [],
       selectedMoods: [],
-      allGenres: ['Рок', 'Поп', 'Джаз', 'Классика', 'Народная', 'Патриотическая'],
-      allMoods: ['Радостное', 'Грустное', 'Торжественное', 'Ностальгическое', 'Героическое'],
+      allGenres: [],
+      allMoods: [],
       songs: [],
       isLoading: false,
       error: null,
-      debouncedSearch: debounce(this.performSearch, 500)
+      debouncedSearch: debounce(this.performSearch, 500) // ? хз че эт
     };
   },
+  computed: { //вместо эластиксерч с бэка
+    filteredSongs() {
+      return this.songs.filter(song => {
+        const matchesSearch = this.searchQuery === '' || 
+          song.Title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          song.Artist.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          (song.Description && song.Description.toLowerCase().includes(this.searchQuery.toLowerCase()))
+        
+        const matchesGenres = this.selectedGenres.length === 0 || 
+          this.selectedGenres.includes(song.Genre)
+
+        const matchesMoods = this.selectedMoods.length === 0 || 
+          this.selectedMoods.includes(song.Mood)
+        
+        return matchesSearch && matchesGenres && matchesMoods
+      })
+    }
+  },
+  async created() {
+    await this.loadSongs()
+    this.extractFilters()
+  },
   methods: {
-    toggleFilters() {
-      this.showFilters = !this.showFilters;
-      if (this.showFilters && (this.selectedGenres.length > 0 || this.selectedMoods.length > 0)) {
-        this.performSearch();
+    async loadSongs() {
+      try {
+        const response = await fetch('./songs_test.json')
+        const data = await response.json()
+        this.songs = data.songs
+      } catch (error) {
+        console.error('Ошибка загрузки песен:', error)
       }
     },
-    async performSearch() {
-      if (!this.searchQuery && this.selectedGenres.length === 0 && this.selectedMoods.length === 0) {
-        this.songs = [];
-        return;
-      }
-
-      this.isLoading = true;
-      this.error = null;
-
-      try {
-        // Здесь будет запрос к вашему бэкенду с Elasticsearch
-        const response = await this.$axios.post('/api/songs/search', {
-          query: this.searchQuery,
-          genres: this.selectedGenres,
-          moods: this.selectedMoods
-        });
-
-        this.songs = response.data;
-      } catch (err) {
-        console.error('Search error:', err);
-        this.error = 'Ошибка при поиске. Пожалуйста, попробуйте позже.';
-      } finally {
-        this.isLoading = false;
-      }
+    extractFilters() {
+      // Получаем уникальные жанры и настроения из всех песен
+      this.allGenres = [...new Set(this.songs.map(song => song.Genre))]
+      this.allMoods = [...new Set(this.songs.map(song => song.Mood))]
+    },
+    toggleFilters() {
+      this.showFilters = !this.showFilters
+    },
+    performSearch() {
+      // В локальной версии просто используем computed свойство filteredSongs
     },
     applyFilters() {
-      this.performSearch();
+      // В локальной версии просто используем computed свойство filteredSongs
+    },
+    formatDuration(seconds) {
+      if (!seconds) return '--:--'
+      const mins = Math.floor(seconds / 60)
+      const secs = seconds % 60
+      return `${mins}:${secs.toString().padStart(2, '0')}`
+    },
+    formatDate(dateString) {
+      if (!dateString) return '--.--.----'
+      const date = new Date(dateString)
+      return date.toLocaleDateString('ru-RU')
     }
   }
-};
+}
 </script>
 
 <style scoped>
