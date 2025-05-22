@@ -78,6 +78,4 @@ RUN mkdir -p pipeline/fullsubnet_plus/pretrained \
 
 # 14) Запуск с увеличенным keep-alive
 EXPOSE 8000
-
-# 7) Запускаем uvicorn
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--timeout-keep-alive", "120"]
