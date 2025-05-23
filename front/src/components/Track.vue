@@ -16,19 +16,16 @@
                     <div class="duration-box"> <h2 class="duration">{{ formatDuration(song.DurationSec) }}</h2> </div>
                 </div>
                 <div class="right">
-                    <div class="btn-down-box">
-
-                    </div>
-                    <div class="btn-play-original">
+                    <div class="btn-play">
+                        <button @click="toggleFreq" class="btn-down">
+                            <img :class="['arrow-down-icon', { 'arrow-up': showFreq }]" src="../assets/arrowwhite.png"> 
+                        </button>
                         <button class="btn-play-original" @click="$emit('play-original')">
-                            <img src="../assets/playold.png" alt="Оригинал">
+                            <img class="arrow-play-original-icon" src="../assets/playold.png" alt="Оригинал">
                         </button>
                         <button class="btn-play-restored" @click="$emit('play-restored')">
-                            <img src="../assets/playnew.png" alt="Реставрация">
+                            <img class="arrow-play-restored-icon" src="../assets/playnew.png" alt="Реставрация">
                         </button>
-                    </div>
-                    <div class="btn-play-restored">
-                        
                     </div>
                     <div class="song-img" :alt="song.Title">
                         <img src="../assets/song1.png">
@@ -80,7 +77,7 @@ export default {
 <style scoped>
     .modal-song{
         position: fixed;
-        top: 11vh;
+        top: 12vh;
         left: 0;
         right: 0;
         bottom: 0;
@@ -103,26 +100,24 @@ export default {
         color: var(--color-white);
         display: inline-flex;
         flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
+        justify-content: space-between;
         width: 100%;
-        padding: 3vh 7vh;
-    }
-
-    .left, .right {
-        
+        padding: 3vh 0;
+        margin: 0 auto;
     }
 
     .left {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
-        width: 50%;
+        width: 45%;
+        margin-left: 9vh;
     }
 
     .arrow-back-box {
         width: 5vh;
         margin-right: 6vh;
+        flex-shrink: 0;
     }
 
     .arrow-back-btn {
@@ -134,7 +129,7 @@ export default {
     .info{
         display: flex;
         flex-direction: column;
-        margin-right: 8vh;
+        margin-right: 14vh;
     }
 
     .title {
@@ -156,11 +151,37 @@ export default {
     }
 
     .right{
-        width: 50%;
+        width: 45%;
         display: flex;
         flex-direction: row;
-        align-items: flex-start;
         justify-content: end;
+        gap: 8vh;
+        margin-right: 10vh;
+    }
+
+    .btn-play{
+        display: flex;
+        margin-top: auto;
+        gap: 1vh;
+    }
+
+    .btn-down, .btn-play-original, .btn-play-restored{
+        background: none;
+        border: none;
+    }
+
+    .arrow-down-icon {
+        transition: transform 0.3s;
+        width: 7vh;
+    }
+
+    .arrow-up {
+        transform: rotate(180deg);
+    }
+
+    .arrow-play-original-icon, .arrow-play-restored-icon{
+        width: 11vh;
+        object-fit: contain;
     }
 
     .song-img img {
