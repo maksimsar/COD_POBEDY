@@ -1,6 +1,24 @@
-@UploadService_HostAddress = http://localhost:5260
+### Загрузить аудиофайл
+POST http://localhost:5260/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
 
-GET {{UploadService_HostAddress}}/weatherforecast/
-Accept: application/json
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="test.mp3"
+Content-Type: audio/mpeg
 
-###
+< D:\COD_POBEDY\Шум виниловой грампластинки.mp3
+--WebAppBoundary
+Content-Disposition: form-data; name="songName"
+
+My Test Song
+--WebAppBoundary
+Content-Disposition: form-data; name="author"
+
+Unknown Artist
+--WebAppBoundary--
+
+### Получить список аудиозаписей
+GET http://localhost:5260/upload
+
+### Скачать аудио по ID
+GET http://localhost:5260/upload/{0196e842-f320-78cc-8c62-709547101d13}

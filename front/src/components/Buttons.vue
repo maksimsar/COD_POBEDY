@@ -1,5 +1,5 @@
 <template>
-    <button :class="buttonClass" @click="$emit('click')"><slot></slot></button>
+    <button :class="buttonClass" @click="handleClick"><slot></slot></button>
 </template>
 
 <script>
@@ -28,6 +28,7 @@ export default {
                 router.push(props.to)
             }
         }
+        return { handleClick }
     },
     computed: {
         buttonClass() {
@@ -46,14 +47,14 @@ export default {
         letter-spacing: 0.06rem;
         border: 0.1em solid;
         border-color: var(--main-bg-color);
-        border-radius:0.6em;
+        border-radius: var(--borderradius);
         cursor: pointer;
         transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         padding:0.9em 1.1em;
-        font-weight: bold;
+        font-weight: var(--h2weight);
     }
 
     .button--primary {

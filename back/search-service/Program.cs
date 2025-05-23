@@ -1,13 +1,51 @@
+using Nest;
+using SearchService.Services;
+using SearchService.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Конфигурация
+builder.Configuration.AddJsonFile("appsettings.json");
+builder.Configuration.AddEnvironmentVariables();
+
+// Сервисы
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Elasticsearch
+var elasticUrl = builder.Configuration["Elasticsearch:Url"];
+var settings = new ConnectionSettings(new Uri(elasticUrl))
+    .DefaultIndex("audio_records")
+    .EnableDebugMode();
+
+builder.Services.AddSingleton<IElasticClient>(new ElasticClient(settings));
+builder.Services.AddScoped<ElasticSearchService>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Инициализация индекса
+using (var scope = app.Services.CreateScope())
+{
+    var client = scope.ServiceProvider.GetRequiredService<IElasticClient>();
+    var response = client.Indices.Create("audio_records", c => c
+    .Map<AudioRecord>(m => m
+        .Properties(p => p
+            .Text(t => t
+                .Name(n => n.SongName)
+                .Analyzer("russian") 
+                .Fields(f => f
+                    .Keyword(k => k.Name("keyword"))
+                    .Text(tt => tt.Name("russian").Analyzer("russian"))
+                )
+            )
+            .Keyword(k => k.Name(n => n.Author))
+        )
+    )
+);
+}
+
+// Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -15,30 +53,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+app.UseAuthorization();
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
