@@ -47,7 +47,7 @@ export default {
         letter-spacing: 0.06rem;
         border: 0.1em solid;
         border-color: var(--main-bg-color);
-        border-radius:0.6em;
+        border-radius: var(--borderradius);
         cursor: pointer;
         transition: all 0.3s ease;
         display: inline-flex;

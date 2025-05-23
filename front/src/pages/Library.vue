@@ -47,20 +47,36 @@
         </div>
       </div>
     </div>
-
-    <!-- Режим просмотра популярных настроений -->
+  </main>
+  <footer>
+     <!-- Режим просмотра популярных настроений -->
     <div v-if="!hasActiveFilters" class="mood-sections">
       <div v-for="mood in topMoods" :key="'mood-section-' + mood.name" class="mood-section">
         <h2 class="mood-title">{{ mood.name }}</h2>
         <div class="mood-songs">
           <div v-for="song in mood.songs" :key="song.Id" class="song-item">
-            <h3>{{ song.Title }}</h3>
-            <p class="artist">{{ song.Artist }}</p>
-            <p class="meta">
-              <span>{{ song.Genre }}</span> • 
-              <span>{{ song.Year }}</span> • 
-              <span>{{ formatDuration(song.DurationSec) }}</span>
-            </p>
+            <div class="gradient-overlay"></div>
+            <div class="song-actions">
+              <button class="action-btn original">
+                <img class='play' src="../assets/playold.png" alt="Оригинал">
+              </button>
+              <button class="action-btn resto">
+                <img class='play' src="../assets/playnew.png" alt="Рестоврация">
+              </button>
+            </div>
+            <div class="songInfo">
+              <div class="songTitleDiv">
+                <div class="title-wrapper">
+                  <span class="songTitle">{{ song.Title }}</span>
+                  <span class="songTitle">{{ song.Title }}</span> <!-- Копия текста -->
+                </div>
+              </div>
+              <div class="songInfoSub">
+                <p class="artist">{{ song.Artist }}</p>
+                <p class="time">{{ formatDuration(song.DurationSec) }}</p>
+              </div>
+            </div>
+            
           </div>
         </div>
       </div>
@@ -73,19 +89,33 @@
       </div>
       <div v-else class="results">
         <div v-for="song in filteredSongs" :key="song.Id" class="song-item">
-          <h3>{{ song.Title }}</h3>
-          <p class="artist">{{ song.Artist }}</p>
-          <p class="meta">
-            <span>{{ song.Genre }}</span> • 
-            <span>{{ formatMoods(song.Moods) }}</span> • 
-            <span>{{ song.Year }}</span> • 
-            <span>{{ formatDuration(song.DurationSec) }}</span>
-          </p>
-          <p v-if="song.Description" class="description">{{ song.Description }}</p>
+          <div class="gradient-overlay"></div>
+          <div class="song-actions">
+              <button class="action-btn original">
+                <img class='play' src="../assets/playold.png" alt="Оригинал">
+              </button>
+              <button class="action-btn resto">
+                <img class='play' src="../assets/playnew.png" alt="Рестоврация">
+              </button>
+            </div>
+            <div class="songInfo">
+              <div class="songTitleDiv">
+                <div class="title-wrapper">
+                  <span class="songTitle">{{ song.Title }}</span>
+                  <span class="songTitle">{{ song.Title }}</span> <!-- Копия текста -->
+                </div>
+              </div>
+              <div class="songInfoSub">
+                <p class="artist">{{ song.Artist }}</p>
+                <p class="time">{{ formatDuration(song.DurationSec) }}</p>
+              </div>
+            </div>
         </div>
       </div>
     </div>
-  </main>
+  </footer>
+   
+  
 </template>
 
 <script>
@@ -134,7 +164,7 @@ export default {
         name: mood,
         songs: this.allSongs.filter(song => 
           song.Moods && song.Moods.includes(mood)
-        ).slice(0, 4) // Берём первые 4 песни для каждого настроения
+        ).slice(0, 6) // Берём первые 4 песни для каждого настроения
       }))
     },
     
@@ -202,17 +232,36 @@ export default {
 
 <style scoped>
 
+.gradient-overlay {
+  border-radius: var(--borderradius);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 107, 158, 0.2) 0%,
+    rgba(255, 107, 158, 0.1) 30%,
+    rgba(255, 107, 158, 0) 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
 .search-container {
   max-width: 80%;
   margin: 2.5vh auto;
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 1vh;
 }
 
 .search-input-wrapper {
   display: flex;
   align-items: center;
-  border-radius: 24px;
+  border-radius: var(--borderradius);
   padding: 14px 24px;
   background: #d2d2d2;
 }
@@ -248,8 +297,8 @@ export default {
   left: 0;
   right: 0;
   background: #d2d2d2;
-  border-radius: 24px;
-  padding: 0 24px;
+  border-radius: var(--borderradius);
+  padding: 0 24px 14px;
   margin-top: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 100;
@@ -333,7 +382,7 @@ export default {
     }
 
     .filter-section input[type=checkbox]:not(.switch) {
-      border-radius: 7px;
+      border-radius: 8px;
     }
     .filter-section input[type=checkbox]:not(.switch):after {
       width: 5px;
@@ -364,19 +413,187 @@ export default {
   margin-right: 10px;
 }
 
+.mood-songs{
+  display: inline-grid;
+  column-gap: 18px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  width: 100%;
+  margin-bottom: 5vh;
+}
+
+.results{
+  display: inline-grid;
+  column-gap: 18px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  width: 100%;
+  row-gap: 24px;
+}
+
 .song-item {
+  background-image: url("../assets/song1.png");
+    background-position: var(--mikeposition);
+    background-size: var(--mikesize);
+    background-repeat: no-repeat;
+  border-radius: var(--borderradius);
+  width: 19vh;
+  height: 19vh;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   padding: 12px;
   border-bottom: 1px solid #eee;
+  position: relative; /* Для позиционирования */
+}
+
+.song-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ff6b9e 0%, rgba(255,107,158,0) 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .song-item:hover {
-  background: #f9f9f9;
+  transform: translateY(-4px) scale(1.04);
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.song-item:hover .song-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.song-item:hover .gradient-overlay {
+  opacity: 1;
+}
+
+.song-actions {
+  position: absolute;
+  top: 3.5vh;
+  right: 4.0vh;
+  display: flex;
+  gap: 7vh;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+
+.play{
+ height: 260%;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.songInfo{
+  color:#e9e9e9;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  
+}
+
+.songInfoSub{
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Расстояние между элементами */
+  font-size: 0.8rem;
+}
+
+.songTitleDiv{
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    black calc(100% - 40px),
+    transparent
+  );
+  margin-bottom: 0;
+}
+
+.artist, .time{
+  margin-top: 0;
+  margin-bottom: 0.5vh;
+}
+
+.artist{
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    black calc(100% - 15px),
+    transparent
+  );
+}
+
+.title-wrapper {
+  display: inline-flex; /* Размещаем копии текста в строку */
+  white-space: nowrap;
+}
+
+.songTitle{
+  font-size: 1.17em;
+  font-weight: bold;
+  white-space: nowrap;
+  margin: 0;
+  padding-right: 40px; /* Для градиентного ухода */
+  display: inline-block; /* Чтобы transform работал правильно */
+  animation: none; /* По умолчанию анимация выключена */
+}
+
+.song-item:hover .title-wrapper {
+  animation: scrollTitle 30s linear infinite;
+}
+
+.song-item:hover .songTitle {
+  animation: scrollTitle 4s linear infinite;
+  mask-image: none; /* Убираем маску при наведении */
+}
+
+@keyframes scrollTitle {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-100% + 100px)); /* Подберите значение под ваш дизайн */
+  }
+}
+
+.mood-title{
+  font-size: var(--buttonfontsize);
+  font-weight: var(--h2weight);
+  color: var(--color-pink);
+  margin-bottom: 3vh;
 }
 
 .loading, .error, .no-results {
   padding: 20px;
   text-align: center;
   color: #666;
+}
+
+main{
+  max-height: 9vh;
 }
 
 .error {
