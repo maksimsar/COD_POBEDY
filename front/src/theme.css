@@ -21,7 +21,7 @@
 }
 @media only screen and (orientation: landscape) and (min-width: 1451px) {
   :root {
-    --maxwidthsize: 63%;
+    --maxwidthsize: 70%;
     --introductionbuttinstop: 12%;
     --buttonfontsize: 1.6em;
     --buttonsgap: 10%;
@@ -106,6 +106,12 @@
   --passive-color: #6b665f;
   --color-dark-pink: #882650;
   --color-pink: #c7333f;
+  --h2weight: bold;
+  --borderradius: 22px;
+}
+
+input {
+  font-family: Ubuntu;
 }
 
 body {
@@ -129,6 +135,14 @@ main {
   max-width: var(--maxwidthsize);
   margin: 0 auto;
   width: 100%;
+}
+
+footer{
+  max-width: 80%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  flex: 1;
 }
 
 
