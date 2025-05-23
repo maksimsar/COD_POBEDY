@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using UploadService.DTOs;
 using UploadService.Repositories;
+using UploadService.DTOs;
+using System.Net.Http;
+using Microsoft.Extensions.Logging;
 
 namespace UploadService.Controllers;
 
@@ -9,11 +11,16 @@ namespace UploadService.Controllers;
 public class UploadController : ControllerBase
 {
     private readonly AudioRecordRepository _repository;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<UploadController> _logger;
 
-    public UploadController(AudioRecordRepository repository, ILogger<UploadController> logger)
+    public UploadController(
+        AudioRecordRepository repository,
+        IHttpClientFactory httpClientFactory,
+        ILogger<UploadController> logger)
     {
         _repository = repository;
+        _httpClientFactory = httpClientFactory;
         _logger = logger;
     }
 
@@ -29,29 +36,34 @@ public class UploadController : ControllerBase
                 return BadRequest("Название песни обязательно");
 
             var audioRecord = await _repository.AddAudioRecordAsync(request);
-            return Ok(new { audioRecord.Id, audioRecord.SongName, audioRecord.Author });
+
+            var httpClient = _httpClientFactory.CreateClient("SearchService");
+            var response = await httpClient.PostAsJsonAsync(
+                "api/search/index",
+                new
+                {
+                    Id = audioRecord.Id,
+                    SongName = audioRecord.SongName,
+                    Author = audioRecord.Author,
+                    UploadDate = audioRecord.UploadDate
+                });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError($"Ошибка индексации: {response.StatusCode}");
+            }
+
+            return Ok(new
+            {
+                audioRecord.Id,
+                audioRecord.SongName,
+                audioRecord.Author
+            });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Ошибка при загрузке файла");
-            return StatusCode(500, "Произошла ошибка при обработке вашего запроса");
+            return StatusCode(500, "Internal Server Error");
         }
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var records = await _repository.GetAllAudioRecordsAsync();
-        return Ok(records.Select(r => new { r.Id, r.SongName, r.Author, r.UploadDate }));
-    }
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
-    {
-        var record = await _repository.GetAudioRecordByIdAsync(id);
-        if (record == null)
-            return NotFound();
-
-        return File(record.FileData, record.ContentType, record.FileName);
     }
 }
