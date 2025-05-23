@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UploadService.Data;
 using UploadService.Repositories;
+using UploadService.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,15 @@ builder.Logging.AddConsole();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<UploadController>();
+
+builder.Services.AddScoped<AudioRecordRepository>();
+builder.Services.AddHttpClient("SearchService", client => 
+{
+    client.BaseAddress = new Uri("http://localhost:5255");
+});
+builder.Services.AddLogging();
 
 // База данных
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
