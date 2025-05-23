@@ -4,7 +4,7 @@
       <router-link to="/" class="logo"><img src = "../assets/logo.png"></router-link>
       <div class="nav-links" v-if="!isIntroduction">
         <router-link :class="{ 'active-link': isActive('/library') }" to="/library">БИБЛИОТЕКА</router-link>
-        <router-link :class="{ 'active-link': isActive('/restoration') }" to="/restoration">РЕСТОВРАЦИЯ</router-link>
+        <router-link :class="{ 'active-link': isActive('/restoration') }" to="/restoration">РЕСТАВРАЦИЯ</router-link>
       </div>
     </div>
   </nav>
@@ -58,7 +58,7 @@ nav {
 .nav-links {
   display: flex;
   gap: 8vh ;
-  font-size: var(--buttonfontsize);
+  font-size: var(--h2size);
   font-weight: var(--h2weight);
 }
 

@@ -43,7 +43,7 @@ export default {
 
 <style scoped>
     .button {
-        font-size: var(--buttonfontsize);
+        font-size: var(--h2size);
         letter-spacing: 0.06rem;
         border: 0.1em solid;
         border-color: var(--main-bg-color);

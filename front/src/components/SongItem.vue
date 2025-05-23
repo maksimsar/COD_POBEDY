@@ -12,12 +12,12 @@
     </div>
     <div class="songInfo">
         <div class="songTitleDiv">
-            <btn class="title-btn">
+            <button class="title-btn" @click="openTrackModal">
                 <div class="title-wrapper">
                     <span class="songTitle">{{ song.Title }}</span>
                     <span class="songTitle">{{ song.Title }}</span> <!-- Копия текста -->
                 </div>
-            </btn>
+            </button>
         </div>
         <div class="songInfoSub">
             <p class="artist">{{ song.Artist }}</p>
@@ -51,6 +51,9 @@ export default {
     }
   },
   methods: {
+    openTrackModal() {
+      this.$emit('open-track', this.song);
+    },
     formatDuration(seconds) {
       if (!seconds) return '--:--'
       const mins = Math.floor(seconds / 60)
@@ -62,6 +65,7 @@ export default {
 </script>
 
 <style scoped>
+
 .gradient-overlay {
   border-radius: var(--borderradius);
   position: absolute;
@@ -104,13 +108,11 @@ export default {
   border-radius: var(--borderradius);
   width: 19vh;
   height: 19vh;
-  border-bottom: 1px solid #eee;
   text-align: left;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding: 12px;
-  border-bottom: 1px solid #eee;
   position: relative; /* Для позиционирования */
 }
 
@@ -168,7 +170,6 @@ export default {
 }
 
 .songInfoSub{
-  font-size: 0.9em;
   display: flex;
   align-items: center;
   gap: 8px; /* Расстояние между элементами */
@@ -190,6 +191,7 @@ export default {
 .artist, .time{
   margin-top: 0;
   margin-bottom: 0.5vh;
+  z-index: 1;
 }
 
 .artist{
@@ -207,13 +209,24 @@ export default {
 }
 
 .songTitle{
-  font-size: 1.17em;
-  font-weight: bold;
+  font-size: 1.35em !important;
+  font-weight: bold !important;
   white-space: nowrap;
   margin: 0;
   padding-right: 40px; /* Для градиентного ухода */
   display: inline-block; /* Чтобы transform работал правильно */
   animation: none; /* По умолчанию анимация выключена */
+}
+
+.title-btn {
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  width: 100%;
+  background: none;
+  border: none;
+  color:#e9e9e9;
+  font-family: Ubuntu;
 }
 
 .song-item:hover .title-wrapper {

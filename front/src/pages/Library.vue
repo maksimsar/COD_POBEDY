@@ -59,6 +59,12 @@
             :song="song"
             @play-original="playOriginal(song)"
             @play-restored="playRestored(song)"
+            @open-track="openTrackModal"
+          />
+          <TrackModal 
+            v-if="showTrackModal"
+            :song="selectedSong"
+            @close="closeTrackModal"
           />
         </div>
       </div>
@@ -75,7 +81,13 @@
           :song="song"
           @play-original="playOriginal(song)"
           @play-restored="playRestored(song)"
+          @open-track="openTrackModal"
         />
+          <TrackModal 
+            v-if="showTrackModal"
+            :song="selectedSong"
+            @close="closeTrackModal"
+          />
       </div>
     </div>
   </footer>
@@ -86,8 +98,10 @@
 <script>
 import SongItem from '../components/SongItem.vue'
 import songsData from '../assets/songs_test.json'
+import TrackModal from '../components/Track.vue';
 export default {
   components: {
+    TrackModal,
     SongItem
   },
   data() {
@@ -98,7 +112,9 @@ export default {
       selectedMoods: [],
       allSongs: [],
       availableGenres: [],
-      availableMoods: []
+      availableMoods: [],
+      showTrackModal: false,
+      selectedSong: null
     }
   },
   computed: {
@@ -162,6 +178,15 @@ export default {
     this.extractFilters()
   },
   methods: {
+    openTrackModal(song) {
+      document.body.classList.add('no-scroll');
+      this.selectedSong = song;
+      this.showTrackModal = true;
+    },
+    closeTrackModal() {
+      document.body.classList.remove('no-scroll');
+      this.showTrackModal = false;
+    },
     async loadSongs() {
       this.allSongs = songsData.songs
     },
@@ -222,7 +247,7 @@ export default {
   align-items: center;
   border-radius: var(--borderradius);
   padding: 14px 24px;
-  background: #d2d2d2;
+  background: var(--color-white);
 }
 
 .search-input {
@@ -230,7 +255,7 @@ export default {
   margin: 0 20px 0 20px;
   border: none;
   outline: none;
-  font-size: calc(var(--buttonfontsize) - 2px);
+  font-size: calc(var(--h2size) - 2px);
   font-weight: bold;
   background: none;
   color: var(--h1-color);
@@ -255,7 +280,7 @@ export default {
   top: 100%;
   left: 0;
   right: 0;
-  background: #d2d2d2;
+  background: var(--color-white);
   border-radius: var(--borderradius);
   padding: 0 24px 14px;
   margin-top: 8px;
@@ -389,8 +414,6 @@ export default {
 }
 
 .mood-title{
-  font-size: var(--buttonfontsize);
-  font-weight: var(--h2weight);
   color: var(--color-pink);
   margin-bottom: 3vh;
 }
