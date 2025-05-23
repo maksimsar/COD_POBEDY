@@ -56,6 +56,7 @@
         <div class="mood-songs">
           <div v-for="song in mood.songs" :key="song.Id" class="song-item">
             <div class="gradient-overlay"></div>
+            <div class="gradient-overlaydark"></div>
             <div class="song-actions">
               <button class="action-btn original">
                 <img class='play' src="../assets/playold.png" alt="Оригинал">
@@ -66,10 +67,10 @@
             </div>
             <div class="songInfo">
               <div class="songTitleDiv">
-                <div class="title-wrapper">
+                <btn class="title-btn"><div class="title-wrapper">
                   <span class="songTitle">{{ song.Title }}</span>
                   <span class="songTitle">{{ song.Title }}</span> <!-- Копия текста -->
-                </div>
+                </div></btn>
               </div>
               <div class="songInfoSub">
                 <p class="artist">{{ song.Artist }}</p>
@@ -90,6 +91,7 @@
       <div v-else class="results">
         <div v-for="song in filteredSongs" :key="song.Id" class="song-item">
           <div class="gradient-overlay"></div>
+          <div class="gradient-overlaydark"></div>
           <div class="song-actions">
               <button class="action-btn original">
                 <img class='play' src="../assets/playold.png" alt="Оригинал">
@@ -241,14 +243,29 @@ export default {
   height: 100%;
   background: linear-gradient(
     to bottom,
-    rgba(255, 107, 158, 0.2) 0%,
-    rgba(255, 107, 158, 0.1) 30%,
-    rgba(255, 107, 158, 0) 70%
+    rgba(146, 5, 54, 0.678) 0%,
+    rgba(158, 5, 59, 0.178) 60%,
+    rgba(255, 107, 158, 0) 90%
   );
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: -1;
+}
+
+.gradient-overlaydark {
+  border-radius: var(--borderradius);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(43, 42, 42, 0) 0%,
+    rgba(58, 57, 57, 0.178) 40%,
+    rgb(32, 31, 32) 80%
+  );
 }
 
 .search-container {
@@ -445,18 +462,6 @@ export default {
   padding: 12px;
   border-bottom: 1px solid #eee;
   position: relative; /* Для позиционирования */
-}
-
-.song-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #ff6b9e 0%, rgba(255,107,158,0) 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
 }
 
 .song-item:hover {
