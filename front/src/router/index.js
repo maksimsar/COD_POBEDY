@@ -2,10 +2,15 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Introduction from '../pages/Introduction.vue'
 import Library from '../pages/Library.vue'
 import Restoration from '../pages/Restoration.vue'
-
+import MainPage from '../pages/MainPage.vue'
 const routes = [
   {
     path: '/',
+    name: 'главная',
+    component: MainPage
+  },
+  {
+    path: '/Meet',
     name: 'приветствие',
     component: Introduction
   },
