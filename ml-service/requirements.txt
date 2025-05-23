@@ -1,6 +1,7 @@
 # core
 fastapi==0.110.2
 uvicorn[standard]==0.29.0
+noisereduce>=2.0.0
 
 # audio I/O и преобразования
 soundfile>=0.12
