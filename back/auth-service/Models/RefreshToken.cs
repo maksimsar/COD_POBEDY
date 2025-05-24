@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace AuthService.Models;
 
 public class RefreshToken
@@ -10,5 +12,5 @@ public class RefreshToken
     public DateTimeOffset IssuedAt  { get; set; }
 
     public string   UserAgent  { get; set; } = string.Empty;
-    public string   IpAddress  { get; set; } = string.Empty;
+    public IPAddress IpAddress  { get; set; } = IPAddress.None;
 }
