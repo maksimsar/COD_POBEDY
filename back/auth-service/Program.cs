@@ -18,7 +18,9 @@ var cfg     = builder.Configuration;
 var svc     = builder.Services;
 
 builder.Configuration
-    .AddJsonFile("appsettings.Development.json", optional: false)
+    .SetBasePath(AppContext.BaseDirectory)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
 // ──────────────── EF Core + Postgres ────────────
@@ -38,7 +40,7 @@ svc.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 
 /*──────────────────────── 4. JWT service  ───────────────────*/
 svc.Configure<JwtSettings>(cfg.GetSection("Jwt"));
-svc.AddSingleton<IJwtTokenService, JwtTokenService>();
+svc.AddScoped<IJwtTokenService, JwtTokenService>();
 
 /*──────────────────────── 5. Domain service ─────────────────*/
 svc.AddScoped<IAuthService, AuthService.Services.AuthService>();
@@ -69,6 +71,10 @@ svc.AddMassTransit(x =>
 });
 
 /*──────────────────────── 8. JWT-Authentication ─────────────*/
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>(optional: true, reloadOnChange: true);
+}
 byte[] key = Encoding.UTF8.GetBytes(cfg["Jwt:Secret"]!);
 
 svc.AddAuthentication("Bearer")
