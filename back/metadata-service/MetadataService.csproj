@@ -47,10 +47,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\common\Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Messaging\Contracts\" />
-  </ItemGroup>
+  </ItemGroup>>
 
 </Project>

@@ -1,6 +1,4 @@
-using Common.DTOs;
-
-namespace Common.Events;
+namespace Common.DTOs;
 
 public sealed record TranscriptSegmentDto(
     int    Index,
