@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using AuthService.Configuration;
@@ -32,11 +33,10 @@ public sealed class JwtTokenService : IJwtTokenService
     }
     
 
-    public async Task<(string Access, RefreshToken Refresh)> GenerateTokensAsync(
-        User user,
+    public async Task<(string Access, RefreshToken Refresh)> GenerateTokensAsync(User user,
         IEnumerable<string> roles,
         string userAgent,
-        string ip,
+        IPAddress ip,
         CancellationToken ct = default)
     {
         /* 1. Access-token (~15 минут) */

@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using AuthService.DTOs;
 using AuthService.Models;
@@ -37,8 +38,7 @@ public sealed class AuthService : IAuthService
 
     /*──────────────────────────  REGISTER  ──────────────────────────*/
 
-    public async Task<TokenResponse> RegisterAsync(
-        string email, string password, string fullName, CancellationToken ct = default)
+    public async Task<TokenResponse> RegisterAsync(string email, string password, string fullName, string userAgent, IPAddress ipAddr, CancellationToken ct = default)
     {
         // 1. Проверяем уникальность e-mail
         if (await _users.GetByEmailAsync(email, ct) is not null)
@@ -75,15 +75,18 @@ public sealed class AuthService : IAuthService
 
         // 5. Генерируем пару токенов
         var (access, refresh) = await _jwt.GenerateTokensAsync(
-            user, new[] { "User" }, "-", "-", ct);
+            user,
+            new[] { "User" },
+            userAgent,
+            ipAddr,
+            ct);
 
         return new TokenResponse(access, refresh.Token, refresh.ExpiresAt);
     }
 
     /*──────────────────────────  LOGIN  ────────────────────────────*/
 
-    public async Task<TokenResponse> LoginAsync(
-        string email, string password, CancellationToken ct = default)
+    public async Task<TokenResponse> LoginAsync(string email, string password, string userAgent, IPAddress ipAddr, CancellationToken ct = default)
     {
         var user = await _users.GetByEmailAsync(email, ct)
                    ?? throw new UnauthorizedAccessException("Invalid credentials");
@@ -97,7 +100,11 @@ public sealed class AuthService : IAuthService
         var roles = user.Roles.Select(r => r.Role.Name).ToArray();
 
         var (access, refresh) = await _jwt.GenerateTokensAsync(
-            user, roles, "-", "-", ct);
+            user,
+            roles,
+            userAgent,
+            ipAddr,
+            ct);
 
         return new TokenResponse(access, refresh.Token, refresh.ExpiresAt);
     }
@@ -105,7 +112,7 @@ public sealed class AuthService : IAuthService
     /*──────────────────────────  REFRESH  ──────────────────────────*/
 
     public async Task<TokenResponse> RefreshAsync(
-        Guid refreshToken, string userAgent, string ip, CancellationToken ct = default)
+        Guid refreshToken, string userAgent, IPAddress  ip, CancellationToken ct = default)
     {
         var token = await _rtRepo.GetAsync(refreshToken, ct)
                     ?? throw new UnauthorizedAccessException("Token not found");
