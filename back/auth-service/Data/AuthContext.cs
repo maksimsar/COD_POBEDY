@@ -65,5 +65,21 @@ public sealed class AuthContext : DbContext
                 .WithMany()
                 .HasForeignKey(rt => rt.UserId);
         });
+        
+        modelBuilder.Entity<OutboxMessage>(entity =>
+        {
+            entity.ToTable("outbox_messages");
+            entity.HasKey(om => om.Id);
+            entity.Property(om => om.Id)
+                .ValueGeneratedOnAdd();                  
+            entity.Property(om => om.Type)
+                .IsRequired();
+            entity.Property(om => om.Payload)
+                .IsRequired();
+            entity.Property(om => om.OccurredOnUtc)
+                .HasColumnType("timestamp with time zone");
+            entity.Property(om => om.Processed)
+                .HasDefaultValue(false);
+        });
     }
 }
