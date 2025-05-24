@@ -10,7 +10,7 @@ const routes = [
     component: MainPage
   },
   {
-    path: '/Meet',
+    path: '/home',
     name: 'приветствие',
     component: Introduction
   },
