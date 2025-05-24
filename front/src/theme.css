@@ -3,7 +3,7 @@
   :root {
     --maxwidthsize: 80%;
     --introductionbuttinstop: 12%;
-    --buttonfontsize: 1.6em;
+    --h2size: 1.6em;
     --buttonsgap: 10%;
     --mikeposition: left;
     --mikesize: cover;
@@ -23,7 +23,7 @@
   :root {
     --maxwidthsize: 70%;
     --introductionbuttinstop: 12%;
-    --buttonfontsize: 1.6em;
+    --h2size: 1.6em;
     --buttonsgap: 10%;
     --mikeposition: left;
     --mikesize: cover;
@@ -43,7 +43,7 @@
   :root {
     --maxwidthsize: 90%;
     --introductionbuttinstop: 14%;
-    --buttonfontsize: 1.6em;
+    --h2size: 1.6em;
     --buttonsgap: 10%;
     --mikeposition: left;
     --mikesize: cover;
@@ -63,7 +63,7 @@
   :root {
     --maxwidthsize: 90%;
     --introductionbuttinstop: 30%;
-    --buttonfontsize: 2.0em;
+    --h2size: 2.0em;
     --buttonsgap: 10%;
     --mikeposition: 50% 0;
     --mikesize: 300%;
@@ -83,7 +83,7 @@
   :root {
     --maxwidthsize: 90%;
     --introductionbuttinstop: 30%;
-    --buttonfontsize: 1.0em;
+    --h2size: 1.0em;
     --buttonsgap: 3%;
     --mikeposition: 50% 0;
     --mikesize: 300%;
@@ -108,6 +108,7 @@
   --color-pink: #c7333f;
   --h2weight: bold;
   --borderradius: 22px;
+  --color-white: #d2d2d2;
 }
 
 input {
@@ -145,4 +146,7 @@ footer{
   flex: 1;
 }
 
-
+h2 {
+  font-size: var(--h2size);
+  font-weight: var(--h2weight);
+}
