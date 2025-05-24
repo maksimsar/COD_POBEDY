@@ -30,4 +30,6 @@ public sealed class UserRepository : IUserRepository
                             ur.Role.Name == roleName, ct);
 
     public Task SaveAsync(CancellationToken ct = default) => _db.SaveChangesAsync(ct);
+    
+    public void AddOutbox(OutboxMessage message) => _db.OutboxMessages.Add(message);
 }

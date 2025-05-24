@@ -13,4 +13,6 @@ public interface IUserRepository
     Task<bool> HasRoleAsync(Guid userId, string roleName, CancellationToken ct = default);
     
     Task SaveAsync(CancellationToken ct = default);
+    
+    void AddOutbox(OutboxMessage message);
 }
