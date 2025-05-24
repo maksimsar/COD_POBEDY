@@ -1,0 +1,152 @@
+
+@media only screen and (orientation: landscape) and (max-width: 1450px) {
+  :root {
+    --maxwidthsize: 80%;
+    --introductionbuttinstop: 12%;
+    --h2size: 1.6em;
+    --buttonsgap: 10%;
+    --mikeposition: left;
+    --mikesize: cover;
+    --introminheight: 60vh;
+    --buttonright: calc((100% - var(--maxwidthsize))/2);
+    --btnpos: flex-end;
+  }
+  h1 {
+    line-height: 1.2;
+    font-size: 2.4em;
+  }
+  p {
+    font-size: 1.2em;
+  }
+}
+@media only screen and (orientation: landscape) and (min-width: 1451px) {
+  :root {
+    --maxwidthsize: 70%;
+    --introductionbuttinstop: 12%;
+    --h2size: 1.6em;
+    --buttonsgap: 10%;
+    --mikeposition: left;
+    --mikesize: cover;
+    --introminheight: 60vh;
+    --buttonright: calc((100% - var(--maxwidthsize))/2);
+    --btnpos: flex-end;
+  }
+  h1 {
+    line-height: 1.2;
+    font-size: 2.4em;
+  }
+  p {
+    font-size: 1.2em;
+  }
+}
+@media only screen and (orientation: landscape) and (max-width: 1300px) {
+  :root {
+    --maxwidthsize: 90%;
+    --introductionbuttinstop: 14%;
+    --h2size: 1.6em;
+    --buttonsgap: 10%;
+    --mikeposition: left;
+    --mikesize: cover;
+    --introminheight: 60vh;
+    --buttonright: calc((100% - var(--maxwidthsize))/2);
+    --btnpos: flex-end;
+  }
+  h1 {
+    line-height: 1.2;
+    font-size: 2.4em;
+  }
+  p {
+    font-size: 1.2em;
+  }
+}
+@media only screen and (orientation: portrait) and (min-height: 1000px) {
+  :root {
+    --maxwidthsize: 90%;
+    --introductionbuttinstop: 30%;
+    --h2size: 2.0em;
+    --buttonsgap: 10%;
+    --mikeposition: 50% 0;
+    --mikesize: 300%;
+    --introminheight: 55vh;
+    --buttonright: 0;
+    --btnpos: center;
+  }
+  h1 {
+    line-height: 1.2;
+    font-size: 2.8em;
+  }
+  p {
+    font-size: 1.5em;
+  }
+}
+@media only screen and (orientation: portrait) and (max-height: 1000px){
+  :root {
+    --maxwidthsize: 90%;
+    --introductionbuttinstop: 30%;
+    --h2size: 1.0em;
+    --buttonsgap: 3%;
+    --mikeposition: 50% 0;
+    --mikesize: 300%;
+    --introminheight: 40vh;
+    --buttonright: 0;
+    --btnpos: center;
+  }
+  h1 {
+    line-height: 1.2;
+    font-size: 1.8em;
+  }
+  p {
+    font-size: 1.0em;
+  }
+}
+
+:root {
+  --main-bg-color: #e3e2de;
+  --h1-color: #3b3531;
+  --passive-color: #6b665f;
+  --color-dark-pink: #882650;
+  --color-pink: #c7333f;
+  --h2weight: bold;
+  --borderradius: 22px;
+  --color-white: #d2d2d2;
+}
+
+input {
+  font-family: Ubuntu;
+}
+
+body {
+  font-family: Ubuntu;
+  color: var(--h1-color);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 101vh;
+  background-color: var(--main-bg-color);
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+  max-width: var(--maxwidthsize);
+  margin: 0 auto;
+  width: 100%;
+}
+
+footer{
+  max-width: 80%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  flex: 1;
+}
+
+h2 {
+  font-size: var(--h2size);
+  font-weight: var(--h2weight);
+}

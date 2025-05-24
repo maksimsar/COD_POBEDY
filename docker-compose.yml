@@ -2,30 +2,40 @@ version: '3.8'
 services:
   api:
     build: ./api-service/ApiService
-    ports: ["5000:80"]
+    ports:
+      - "5000:80"
     environment:
-      - DATABASE_URL=Host=postgres;Username=postgres;Password=postgres;Database=audio
-      - ELASTIC_URL=http://elasticsearch:9200
-      - ML_SERVICE_URL=http://ml-service:8000
+      DATABASE_URL: "Host=postgres;Username=postgres;Password=postgres;Database=audio"
+      ELASTIC_URL:    "http://elasticsearch:9200"
+      ML_SERVICE_URL: "http://ml-service:8000"
     volumes:
       - ./storage/uploads:/app/uploads
+    depends_on:
+      - postgres
+      - elasticsearch
+      - ml-service
 
   ml-service:
-    build: ./ml-service
-    ports: ["8000:8000"]
+    build:
+      context: ./ml-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
     volumes:
       - ./ml-service/models:/app/models
 
   postgres:
     image: postgres:14
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER:     postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: audio
-    ports: ["5432:5432"]
+      POSTGRES_DB:       audio
+    ports:
+      - "5432:5432"
 
   elasticsearch:
     image: elasticsearch:7.17.9
     environment:
       discovery.type: single-node
-    ports: ["9200:9200"]
+    ports:
+      - "9200:9200"

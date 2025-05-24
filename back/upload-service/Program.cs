@@ -1,44 +1,70 @@
+using Microsoft.EntityFrameworkCore;
+using UploadService.Data;
+using UploadService.Repositories;
+using UploadService.Controllers;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Конфигурация
+builder.Configuration.AddJsonFile("appsettings.json");
+builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true);
+builder.Configuration.AddEnvironmentVariables();
+
+// Логирование
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+// Сервисы
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<UploadController>();
+
+builder.Services.AddScoped<AudioRecordRepository>();
+builder.Services.AddHttpClient("SearchService", client => 
+{
+    client.BaseAddress = new Uri("http://localhost:5255");
+});
+builder.Services.AddLogging();
+
+// База данных
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"Using connection string: {connectionString}");
+
+builder.Services.AddDbContext<AppDbContext>(options => 
+    options.UseNpgsql(connectionString)
+    .EnableSensitiveDataLogging()
+    .EnableDetailedErrors());
+
+// Репозитории
+builder.Services.AddScoped<AudioRecordRepository>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
 
-var summaries = new[]
+// Инициализация БД
+try 
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+    Console.WriteLine("Database created successfully");
+}
+catch (Exception ex)
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    Console.WriteLine($"Database creation failed: {ex.Message}");
+}
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -41,12 +41,12 @@ public sealed class FileProcessedConsumer : BaseConsumer<FileProcessedV1>
         await _storage.DownloadAsync(e.StorageKey, ctx.CancellationToken);
 
         // 2) отметим песню как processed
-        var song = await _songRepo.GetByIdAsync(e.AudioFileId, ctx.CancellationToken)
-                   ?? throw new InvalidOperationException($"Song {e.AudioFileId} not found");
-        song.Status = SongStatus.Processed;
-        await _uow.SaveChangesAsync(ctx.CancellationToken);
+var song = await _songRepo.GetByIdAsync(e.AudioFileId, ctx.CancellationToken)
+                       ?? throw new InvalidOperationException($"Song {e.AudioFileId} not found");
+            song.Status = SongStatus.Processed;
+            await _uow.SaveChangesAsync(ctx.CancellationToken);
 
-        // 3) публикуем задачу в очередь transcribe (может быть отдельный сервис)
-        await _bus.Publish(new StartTranscriptionV1(e.AudioFileId, e.StorageKey), ctx.CancellationToken);
+            // 3) публикуем задачу в очередь transcribe (может быть отдельный сервис)
+            await _bus.Publish(new StartTranscriptionV1(e.AudioFileId, e.StorageKey), ctx.CancellationToken);
     }
 }

@@ -47,6 +47,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\common\Common.csproj" />
-  </ItemGroup>
+  </ItemGroup>>
 
 </Project>

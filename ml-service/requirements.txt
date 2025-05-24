@@ -1,5 +1,30 @@
-fastapi
-uvicorn[standard]
-torch
-torchaudio
+# core
+fastapi==0.110.2
+uvicorn[standard]==0.29.0
+noisereduce>=2.0.0
+
+# audio I/O и преобразования
+soundfile>=0.12
+torchaudio>=2.2
+librosa>=0.10
+cycler>=0.10
+pyloudnorm>=0.1.1
+
+# ML / DL
+torch>=2.3
+transformers>=4.41
+sentencepiece
+accelerate
+
+# шаги пайплайна
+demucs==4.0.0
+
 openai-whisper
+
+# служебное
+rich
+tqdm
+# De-clipper + Vocal-fixer
+
+# YAML для тренинга
+pyyaml
